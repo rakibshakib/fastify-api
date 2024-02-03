@@ -1,4 +1,7 @@
-const itemList = require("../data").itemsArray;
+const {
+  getAllItems,
+  getSingleItemById,
+} = require("../controller/items.controller");
 
 // common item schema
 const ITEMS = {
@@ -22,6 +25,10 @@ const getAllItemsOptions = {
       },
     },
   },
+  preHandler: async (request, reply) => {
+    console.log("check auth....");
+  },
+  handler: getAllItems,
 };
 
 const singleItemsOptions = {
@@ -30,18 +37,15 @@ const singleItemsOptions = {
       200: ITEMS,
     },
   },
+  handler: getSingleItemById,
 };
 
 const itemsRoutes = (fastify, options, done) => {
   // get all items
-  fastify.get("/items", getAllItemsOptions, async (request, reply) => {
-    reply.send(itemList);
-  });
+  fastify.get("/items", getAllItemsOptions);
 
   // get single item by item id
-  fastify.get("/items/:id", singleItemsOptions, async (request, reply) => {
-    reply.send(itemList.find((pro) => pro.id === request.params.id) || {});
-  });
+  fastify.get("/items/:id", singleItemsOptions);
 
   done();
 };
